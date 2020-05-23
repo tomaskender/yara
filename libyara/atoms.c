@@ -868,7 +868,8 @@ static int _yr_atoms_xor(
 
 static int _yr_atoms_wide(
     YR_ATOM_LIST_ITEM* atoms,
-    YR_ATOM_LIST_ITEM** wide_atoms)
+    YR_ATOM_LIST_ITEM** wide_atoms,
+    bool is_big_endian)
 {
   YR_ATOM_LIST_ITEM* atom;
   YR_ATOM_LIST_ITEM* new_atom;
@@ -891,10 +892,11 @@ static int _yr_atoms_wide(
       new_atom->atom.mask[i] = 0xFF;
     }
 
+    int endian_offset = is_big_endian ? 1 : 0;
     for (i = 0; i < atom->atom.length; i++)
     {
       if (i * 2 < YR_MAX_ATOM_LENGTH)
-        new_atom->atom.bytes[i * 2] = atom->atom.bytes[i];
+        new_atom->atom.bytes[i * 2 + endian_offset] = atom->atom.bytes[i];
       else
         break;
     }
@@ -1414,12 +1416,12 @@ int yr_atoms_extract_from_re(
   // Don't do convert atoms to wide here if either base64 modifier is used.
   // This is to avoid the situation where we have "base64 wide" because
   // the wide has already been applied BEFORE the base64 encoding.
-  if (modifier.flags & STRING_FLAGS_WIDE &&
+  if (modifier.flags & STRING_FLAGS_WIDE_LE &&
       !(modifier.flags & STRING_FLAGS_BASE64 ||
         modifier.flags & STRING_FLAGS_BASE64_WIDE))
   {
     FAIL_ON_ERROR_WITH_CLEANUP(
-        _yr_atoms_wide(*atoms, &wide_atoms),
+        _yr_atoms_wide(*atoms, &wide_atoms, false),
         {
           yr_atoms_list_destroy(*atoms);
           yr_atoms_list_destroy(wide_atoms);
@@ -1537,10 +1539,10 @@ int yr_atoms_extract_from_string(
   *atoms = item;
   *min_atom_quality = max_quality;
 
-  if (modifier.flags & STRING_FLAGS_WIDE)
+  if (modifier.flags & (STRING_FLAGS_WIDE_LE | STRING_FLAGS_WIDE_BE))
   {
     FAIL_ON_ERROR_WITH_CLEANUP(
-        _yr_atoms_wide(*atoms, &wide_atoms),
+        _yr_atoms_wide(*atoms, &wide_atoms, modifier.flags & STRING_FLAGS_WIDE_BE),
         {
           yr_atoms_list_destroy(*atoms);
           yr_atoms_list_destroy(wide_atoms);

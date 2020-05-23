@@ -417,7 +417,7 @@ int yr_base64_ast_from_string(
   BASE64_NODE* tail = NULL;
   SIZED_STRING* wide_str;
 
-  if (modifier.flags & STRING_FLAGS_WIDE)
+  if (modifier.flags & STRING_FLAGS_WIDE_LE)
   {
     wide_str = sized_string_convert_to_wide(in_str);
 
@@ -469,7 +469,7 @@ int yr_base64_ast_from_string(
     }
   }
 
-  if (!(modifier.flags & STRING_FLAGS_WIDE) &&
+  if (!(modifier.flags & (STRING_FLAGS_WIDE_LE | STRING_FLAGS_WIDE_BE)) &&
       !(modifier.flags & STRING_FLAGS_ASCII))
   {
     if (modifier.flags & STRING_FLAGS_BASE64)

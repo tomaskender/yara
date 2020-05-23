@@ -182,6 +182,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 %token <sized_string> _REGEXP_                         "regular expression"
 %token _ASCII_                                         "<ascii>"
 %token _WIDE_                                          "<wide>"
+%token _L_ENDIAN_                                      "<little_endian>"
+%token _B_ENDIAN_                                      "<big_endian>"
 %token _XOR_                                           "<xor>"
 %token _BASE64_                                        "<base64>"
 %token _BASE64_WIDE_                                   "<base64wide>"
@@ -712,11 +714,13 @@ string_modifiers
 
 
 string_modifier
-    : _WIDE_        { $$.flags = STRING_FLAGS_WIDE; }
-    | _ASCII_       { $$.flags = STRING_FLAGS_ASCII; }
-    | _NOCASE_      { $$.flags = STRING_FLAGS_NO_CASE; }
-    | _FULLWORD_    { $$.flags = STRING_FLAGS_FULL_WORD; }
-    | _PRIVATE_     { $$.flags = STRING_FLAGS_PRIVATE; }
+    : _WIDE_                      { $$.flags = STRING_FLAGS_WIDE_LE; }
+    | _WIDE_ '(' _L_ENDIAN_ ')'   { $$.flags = STRING_FLAGS_WIDE_LE; }
+    | _WIDE_ '(' _B_ENDIAN_ ')'   { $$.flags = STRING_FLAGS_WIDE_BE; }
+    | _ASCII_                     { $$.flags = STRING_FLAGS_ASCII; }
+    | _NOCASE_                    { $$.flags = STRING_FLAGS_NO_CASE; }
+    | _FULLWORD_                  { $$.flags = STRING_FLAGS_FULL_WORD; }
+    | _PRIVATE_                   { $$.flags = STRING_FLAGS_PRIVATE; }
     | _XOR_
       {
         $$.flags = STRING_FLAGS_XOR;
@@ -837,7 +841,7 @@ regexp_modifiers
     ;
 
 regexp_modifier
-    : _WIDE_        { $$.flags = STRING_FLAGS_WIDE; }
+    : _WIDE_        { $$.flags = STRING_FLAGS_WIDE_LE; }
     | _ASCII_       { $$.flags = STRING_FLAGS_ASCII; }
     | _NOCASE_      { $$.flags = STRING_FLAGS_NO_CASE; }
     | _FULLWORD_    { $$.flags = STRING_FLAGS_FULL_WORD; }

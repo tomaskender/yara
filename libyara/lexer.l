@@ -178,6 +178,8 @@ octdigit      [0-7]
 "strings"               { return _STRINGS_;     }
 "ascii"                 { return _ASCII_;       }
 "wide"                  { return _WIDE_;        }
+"little_endian"         { return _L_ENDIAN_;    }
+"big_endian"            { return _B_ENDIAN_;    }
 "xor"                   { return _XOR_;         }
 "base64"                { return _BASE64_;      }
 "base64wide"            { return _BASE64_WIDE_; }

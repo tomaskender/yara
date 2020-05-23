@@ -483,7 +483,7 @@ static int _yr_parser_write_string(
 
   if (modifier.flags & STRING_FLAGS_LITERAL)
   {
-    if (modifier.flags & STRING_FLAGS_WIDE)
+    if (modifier.flags & (STRING_FLAGS_WIDE_LE | STRING_FLAGS_WIDE_BE))
       max_string_len = string->length * 2;
     else
       max_string_len = string->length;
@@ -641,7 +641,7 @@ int yr_parser_reduce_string_declaration(
       goto _exit;
   }
 
-  if (!(modifier.flags & STRING_FLAGS_WIDE) &&
+  if (!(modifier.flags & (STRING_FLAGS_WIDE_LE | STRING_FLAGS_WIDE_BE)) &&
       !(modifier.flags & STRING_FLAGS_XOR) &&
       !(modifier.flags & STRING_FLAGS_BASE64 ||
         modifier.flags & STRING_FLAGS_BASE64_WIDE))
