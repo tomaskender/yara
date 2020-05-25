@@ -107,6 +107,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define STRING_IS_ASCII(x) \
     (((x)->flags) & STRING_FLAGS_ASCII)
 
+
+#define STRING_IS_WIDE(x) \
+    (((x)->flags) & (STRING_FLAGS_WIDE_LE | STRING_FLAGS_WIDE_BE))
+
 #define STRING_IS_WIDE_LE(x) \
     (((x)->flags) & STRING_FLAGS_WIDE_LE)
 

@@ -808,7 +808,7 @@ static int _yr_scan_verify_literal_match(
           string->length);
     }
 
-    if ((STRING_IS_WIDE_LE(string) || STRING_IS_WIDE_BE(string)) && forward_matches == 0)
+    if (STRING_IS_WIDE(string) && forward_matches == 0)
     {
       forward_matches = _yr_scan_wicompare(
           data + offset,
@@ -829,7 +829,7 @@ static int _yr_scan_verify_literal_match(
           string->length);
     }
 
-    if ((STRING_IS_WIDE_LE(string) || STRING_IS_WIDE_BE(string)) && forward_matches == 0)
+    if (STRING_IS_WIDE(string) && forward_matches == 0)
     {
       forward_matches = _yr_scan_wcompare(
           data + offset,
@@ -841,7 +841,7 @@ static int _yr_scan_verify_literal_match(
 
     if (STRING_IS_XOR(string) && forward_matches == 0)
     {
-      if (STRING_IS_WIDE_LE(string) || STRING_IS_WIDE_BE(string))
+      if (STRING_IS_WIDE(string))
       {
         forward_matches = _yr_scan_xor_wcompare(
             data + offset,
