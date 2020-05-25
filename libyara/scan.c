@@ -161,7 +161,8 @@ static int _yr_scan_wcompare(
     const uint8_t* data,
     size_t data_size,
     uint8_t* string,
-    size_t string_length)
+    size_t string_length,
+    bool is_big_endian)
 {
   const uint8_t* s1 = data;
   const uint8_t* s2 = string;
@@ -171,7 +172,8 @@ static int _yr_scan_wcompare(
   if (data_size < string_length * 2)
     return 0;
 
-  while (i < string_length && *s1 == *s2 && *(s1 + 1) == 0x00)
+  int endian_offset = is_big_endian ? 1 : 0;
+  while (i < string_length && *(s1+endian_offset) == *s2 && *(s1 + 1 - endian_offset) == 0x00)
   {
     s1+=2;
     s2++;
@@ -186,7 +188,8 @@ static int _yr_scan_wicompare(
     const uint8_t* data,
     size_t data_size,
     uint8_t* string,
-    size_t string_length)
+    size_t string_length,
+    bool is_big_endian)
 {
   const uint8_t* s1 = data;
   const uint8_t* s2 = string;
@@ -196,9 +199,10 @@ static int _yr_scan_wicompare(
   if (data_size < string_length * 2)
     return 0;
 
+  int endian_offset = is_big_endian ? 1 : 0;
   while (i < string_length &&
-         yr_lowercase[*s1] == yr_lowercase[*s2] &&
-         *(s1 + 1) == 0x00)
+         yr_lowercase[*s1+endian_offset] == yr_lowercase[*s2] &&
+         *(s1 + 1 - endian_offset) == 0x00)
   {
     s1+=2;
     s2++;
@@ -810,7 +814,8 @@ static int _yr_scan_verify_literal_match(
           data + offset,
           data_size - offset,
           string->string,
-          string->length);
+          string->length,
+          STRING_IS_WIDE_BE(string));
     }
   }
   else
@@ -830,7 +835,8 @@ static int _yr_scan_verify_literal_match(
           data + offset,
           data_size - offset,
           string->string,
-          string->length);
+          string->length,
+          STRING_IS_WIDE_BE(string));
     }
 
     if (STRING_IS_XOR(string) && forward_matches == 0)

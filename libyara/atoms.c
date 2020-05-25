@@ -895,7 +895,7 @@ static int _yr_atoms_wide(
     int endian_offset = is_big_endian ? 1 : 0;
     for (i = 0; i < atom->atom.length; i++)
     {
-      if (i * 2 < YR_MAX_ATOM_LENGTH)
+      if (i * 2 + endian_offset < YR_MAX_ATOM_LENGTH)
         new_atom->atom.bytes[i * 2 + endian_offset] = atom->atom.bytes[i];
       else
         break;
